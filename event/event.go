@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
+	"os"
 
 	"github.com/zwzn/dnd/character"
 	"golang.org/x/xerrors"
@@ -50,9 +51,13 @@ type chWrapper struct {
 
 func UpdateCharacterFile(ch *character.Character, file string) error {
 
-	b, err := ioutil.ReadFile(file)
+	f, err := os.OpenFile(file, os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return xerrors.Errorf("error opening log file: %w", err)
+	}
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		return xerrors.Errorf("error reading log file: %w", err)
 	}
 
 	lines := bytes.Split(b, []byte("\n"))
