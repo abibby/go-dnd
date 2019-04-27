@@ -4,14 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
-	"log"
-	"os"
-	"strconv"
-	"strings"
 
-	"github.com/davecgh/go-spew/spew"
-	"github.com/zwzn/dnd/blade"
 	"github.com/zwzn/dnd/character"
+	"golang.org/x/xerrors"
+)
+
+type EventType string
+
+const (
+	LongRest  = EventType("long-rest")
+	ShortRest = EventType("short-rest")
 )
 
 type Event struct {
@@ -22,34 +24,35 @@ type Event struct {
 	EventEvent
 }
 type DamageEvent struct {
-	Damage int `json:"damage"`
+	Damage int `json:"damage,omitempty"`
 }
 type StatusEvent struct {
-	Effect string `json:"effect"`
-	Reset  string `json:"reset"`
+	Effect string    `json:"effect,omitempty"`
+	Reset  EventType `json:"reset,omitempty"`
 }
 type UseEvent struct {
-	Name string `json:"name"`
+	Use string `json:"use,omitempty"`
 }
 type EventEvent struct {
-	Event string `json:"event"`
+	Event EventType `json:"event,omitempty"`
 }
 type recharge struct {
+	event   EventType
 	current int
 	use     int
 	total   int
 }
 type chWrapper struct {
 	*character.Character
-	status   map[string][]string
-	recharge map[string]map[string]recharge
+	status   map[EventType][]string
+	recharge map[string]recharge
 }
 
 func UpdateCharacterFile(ch *character.Character, file string) error {
 
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
-		log.Fatal(err)
+		return xerrors.Errorf("error opening log file: %w", err)
 	}
 
 	lines := bytes.Split(b, []byte("\n"))
@@ -64,52 +67,18 @@ func UpdateCharacterFile(ch *character.Character, file string) error {
 func UpdateCharacter(ch *character.Character, events []*Event) error {
 	chw := &chWrapper{
 		Character: ch,
-		status:    map[string][]string{},
-		recharge:  map[string]map[string]recharge{},
+		status:    map[EventType][]string{},
+		recharge:  map[string]recharge{},
 	}
-	chw.updateBlade()
+	chw.updatePreBlade()
 	for _, event := range events {
 		event.DamageEvent.Run(chw)
 		event.StatusEvent.Run(chw)
 		event.EventEvent.Run(chw)
 		event.UseEvent.Run(chw)
 	}
-	spew.Dump(chw)
-	os.Exit(1)
+	chw.updatePostBlade()
 	return nil
-}
-
-func (c *chWrapper) updateBlade() {
-	b := blade.New()
-	b.Directive("recharge", func(args []string) string {
-		name := args[0]
-		event := args[1]
-		count := 1
-		use := 1
-		if len(args) > 2 {
-			parts := strings.Split(args[2], "/")
-			if len(parts) == 1 {
-				count, _ = strconv.Atoi(parts[0])
-			} else {
-				count, _ = strconv.Atoi(parts[0])
-				use, _ = strconv.Atoi(parts[1])
-				count *= use
-
-			}
-		}
-		e, ok := c.recharge[event]
-		if !ok {
-			e = map[string]recharge{}
-		}
-		e[name] = recharge{
-			total:   count,
-			use:     use,
-			current: count,
-		}
-		c.recharge[event] = e
-		return ""
-	})
-	c.Blade(b)
 }
 
 func (e *DamageEvent) Run(ch *chWrapper) {
@@ -127,22 +96,19 @@ func (e *StatusEvent) Run(ch *chWrapper) {
 }
 
 func (e *UseEvent) Run(ch *chWrapper) {
-	if e.Name == "" {
+	if e.Use == "" {
 		return
 	}
 
-	for _, recharge := range ch.recharge {
-		for name, count := range recharge {
-			if name != e.Name {
-				continue
-			}
-			count.current -= count.use
-			if count.current < 0 {
-				count.current = 0
-			}
-			recharge[name] = count
-		}
+	r, ok := ch.recharge[e.Use]
+	if !ok {
+		return
 	}
+	r.current -= r.use
+	if r.current < 0 {
+		r.current = 0
+	}
+	ch.recharge[e.Use] = r
 }
 
 func (e *EventEvent) Run(ch *chWrapper) {
@@ -151,13 +117,23 @@ func (e *EventEvent) Run(ch *chWrapper) {
 	}
 	delete(ch.status, e.Event)
 
-	if recharge, ok := ch.recharge[e.Event]; ok {
-		for name, count := range recharge {
-			count.current++
-			if count.current > count.total {
-				count.current = count.total
-			}
-			recharge[name] = count
+	for name, r := range ch.recharge {
+		if r.event != e.Event {
+			continue
 		}
+		r.current += r.total / r.use
+		if r.current > r.total {
+			r.current = r.total
+		}
+		ch.recharge[name] = r
 	}
+
+	switch e.Event {
+	case LongRest:
+		ch.CurrentHP = ch.MaxHP
+		fallthrough
+	case ShortRest:
+
+	}
+
 }

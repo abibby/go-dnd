@@ -26,7 +26,7 @@ expertise:
 # Spells
 
 ## Fog Cloud
-@recharge("Fog Cloud" "long rest" 1)
+@recharge("fog-cloud" "long-rest")
 
 * **Casting Time**: 1 action
 * **Range/Area**: 120ft./20ft.
@@ -39,4 +39,4 @@ You create a 20-foot-radius sphere of fog centered on a point within range. The 
 At Higher Levels. When you cast this spell using a spell slot of 2nd level or higher, the radius of the fog increases by 20 feet for each slot level above 1st.
 
 ## Power Nap
-@recharge("power nap" "long rest" 1/7)
+@recharge("power-nap" "long-rest" 1 7)

@@ -1,11 +1,26 @@
-{"type": "damage", "damage": 10}
-{"type": "damage", "damage": -2}
-{"type": "status", "effect": "test effect", "reset": "short rest"}
-{"type": "event", "event": "short rest"}
-{"type": "use", "name": "power nap"}
-{"type": "event", "event": "short rest"}
-{"type": "event", "event": "long rest"}
-{"type": "event", "event": "long rest"}
-{"type": "event", "event": "long rest"}
-{"type": "event", "event": "long rest"}
-{"type": "event", "event": "long rest"}
+{"type":"event","event":"short-rest"}
+{"type":"event","event":"short-rest"}
+{"type":"event","event":"short-rest"}
+{"type":"event","event":"long-rest"}
+{"type":"event","damage":10}
+{"type":"event","damage":-5}
+{"type":"event","event":"long-rest"}
+{"type":"event","event":"long-rest"}
+{"type":"event","event":"long-rest"}
+{"type":"damage","damage":10}
+{"type":"use","use":"blind"}
+{"type":"use","use":"blind"}
+{"type":"status","effect":"blind","reset":"short-rest"}
+{"type":"status","effect":"blind","reset":"short-rest"}
+{"type":"status","effect":"blind","reset":"short-rest"}
+{"type":"event","event":"long-rest"}
+{"type":"use","use":"power-nap"}
+{"type":"use","use":"fog-cloud"}
+{"type":"event","event":"long-rest"}
+{"type":"event","event":"long-rest"}
+{"type":"event","event":"long-rest"}
+{"type":"event","event":"long-rest"}
+{"type":"event","event":"long-rest"}
+{"type":"event","event":"long-rest"}
+{"type":"event","event":"long-rest"}
+{"type":"event","event":"long-rest"}

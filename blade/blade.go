@@ -1,53 +1,50 @@
 package blade
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
 	"regexp"
 )
 
 type Parser struct {
-	directives map[string]func(args []string) string
+	directives map[string]func(args Args) string
 }
 
 func New() *Parser {
 	return &Parser{
-		directives: map[string]func(args []string) string{},
+		directives: map[string]func(args Args) string{},
 	}
 }
 
-func (b *Parser) Directive(name string, callback func(args []string) string) {
+func (b *Parser) Directive(name string, callback func(args Args) string) {
 	b.directives[name] = callback
 }
 
 func (b *Parser) Parse(doc string) string {
+	bDoc := []byte(doc)
 	for name, callback := range b.directives {
 		re := regexp.MustCompile(fmt.Sprintf(`\@%s\(([^\)]*)\)`, regexp.QuoteMeta(name)))
-		doc = re.ReplaceAllStringFunc(doc, func(s string) string {
-			args := []string{}
-			arg := ""
-			quoted := rune(0)
-			for _, c := range re.FindStringSubmatch(s)[1] {
-				if c == '"' || c == '\'' {
-					if quoted == 0 {
-						quoted = c
-					} else {
-						quoted = 0
-					}
-					continue
-				} else if c == ' ' {
-					if quoted == 0 {
-						args = append(args, arg)
-						arg = ""
-						continue
-					}
-				}
-				arg += string(c)
-			}
-
-			args = append(args, arg)
-			return callback(args)
+		bDoc = re.ReplaceAllFunc(bDoc, func(s []byte) []byte {
+			return []byte(callback(Args(re.FindSubmatch(s)[1])))
 		})
 
 	}
-	return doc
+	return string(bDoc)
+}
+
+type Args []byte
+
+func (a Args) Unmarshal(args ...interface{}) error {
+	d := json.NewDecoder(bytes.NewReader([]byte(a)))
+	for _, arg := range args {
+		err := d.Decode(arg)
+		if err == io.EOF {
+			return nil
+		} else if err != nil {
+			return err
+		}
+	}
+	return nil
 }

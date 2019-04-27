@@ -17,31 +17,40 @@
         <span class="slash">/</span>
         <span class="max">{{.MaxHP}}</span>
     </section>
+    <section class="speed">
+        <span class="value">{{.Speed}}</span><span class="unit">ft</span>
+    </section>
+    <section class="initiative">
+        {{sign .Initiative}}
+    </section>
     <section class="stats">
         <div class="block str">
             <div class="score">{{.AbilityScores.str}}</div>
-            <div class="mod">{{.AbilityScoreMods.str}}</div>
+            <div class="mod">{{sign .AbilityScoreMods.str}}</div>
         </div>
         <div class="block dex">
             <div class="score">{{.AbilityScores.dex}}</div>
-            <div class="mod">{{.AbilityScoreMods.dex}}</div>
+            <div class="mod">{{sign .AbilityScoreMods.dex}}</div>
         </div>
         <div class="block con">
             <div class="score">{{.AbilityScores.con}}</div>
-            <div class="mod">{{.AbilityScoreMods.con}}</div>
+            <div class="mod">{{sign .AbilityScoreMods.con}}</div>
         </div>
         <div class="block int">
             <div class="score">{{.AbilityScores.int}}</div>
-            <div class="mod">{{.AbilityScoreMods.int}}</div>
+            <div class="mod">{{sign .AbilityScoreMods.int}}</div>
         </div>
         <div class="block wis">
             <div class="score">{{.AbilityScores.wis}}</div>
-            <div class="mod">{{.AbilityScoreMods.wis}}</div>
+            <div class="mod">{{sign .AbilityScoreMods.wis}}</div>
         </div>
         <div class="block cha">
             <div class="score">{{.AbilityScores.cha}}</div>
-            <div class="mod">{{.AbilityScoreMods.cha}}</div>
+            <div class="mod">{{sign .AbilityScoreMods.cha}}</div>
         </div>
+    </section>
+    <section class="skills">
+        {{.SkillTable}}
     </section>
     <section class="extra">
         {{.Extra}}

@@ -2,8 +2,8 @@ package character
 
 import (
 	"io/ioutil"
-	"log"
 	"math"
+	"sort"
 	"strings"
 
 	"github.com/zwzn/dnd/blade"
@@ -45,6 +45,7 @@ type Character struct {
 	Status    []string
 }
 type character struct {
+	file          string
 	rawMD         string
 	Name          string         `yaml:"name"`
 	Level         int            `yaml:"level"`
@@ -56,17 +57,25 @@ type character struct {
 	Expertise     []string       `yaml:"expertise"`
 }
 
+type Skill struct {
+	Prof  string
+	Mod   string
+	Skill string
+	Bonus int
+}
+
 func NewFile(file string) (*Character, error) {
 
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
-		log.Fatal(err)
+		return nil, xerrors.Errorf("error opening character file: %w", err)
 	}
-	return New(string(b))
+	return New(file, string(b))
 }
-func New(md string) (*Character, error) {
+func New(file, md string) (*Character, error) {
 
 	ch := &Character{}
+	ch.file = file
 	parts := strings.SplitN(md, "\n----", 2)
 
 	if !strings.HasPrefix(parts[0], "----") {
@@ -126,15 +135,28 @@ func (c *Character) SavingThrows() map[string]int {
 	return saves
 }
 
-func (c *Character) Skills() map[string]int {
-	skills := map[string]int{}
+func (c *Character) Skills() []*Skill {
+	skills := []*Skill{}
 	for skill, mod := range Skills {
+		prof := ""
 		bonus := c.AbilityScoreMods()[mod]
-		if inList(c.Proficiencies, skill) {
+		if inList(c.Expertise, skill) {
+			prof = "E"
+			bonus += c.Proficiency() * 2
+		} else if inList(c.Proficiencies, skill) {
+			prof = "P"
 			bonus += c.Proficiency()
 		}
-		skills[skill] = bonus
+		skills = append(skills, &Skill{
+			Prof:  prof,
+			Mod:   mod,
+			Skill: skill,
+			Bonus: bonus,
+		})
 	}
+	sort.Slice(skills, func(i, j int) bool {
+		return skills[i].Skill < skills[j].Skill
+	})
 	return skills
 }
 
