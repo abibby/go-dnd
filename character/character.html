@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Character</title>
+</head>
+
+<body>
+    <section class="name">
+        {{.Name}}
+    </section>
+    <section class="hp">
+        <span class="current">{{.CurrentHP}}</span>
+        <span class="slash">/</span>
+        <span class="max">{{.MaxHP}}</span>
+    </section>
+    <section class="stats">
+        <div class="block str">
+            <div class="score">{{.AbilityScores.str}}</div>
+            <div class="mod">{{.AbilityScoreMods.str}}</div>
+        </div>
+        <div class="block dex">
+            <div class="score">{{.AbilityScores.dex}}</div>
+            <div class="mod">{{.AbilityScoreMods.dex}}</div>
+        </div>
+        <div class="block con">
+            <div class="score">{{.AbilityScores.con}}</div>
+            <div class="mod">{{.AbilityScoreMods.con}}</div>
+        </div>
+        <div class="block int">
+            <div class="score">{{.AbilityScores.int}}</div>
+            <div class="mod">{{.AbilityScoreMods.int}}</div>
+        </div>
+        <div class="block wis">
+            <div class="score">{{.AbilityScores.wis}}</div>
+            <div class="mod">{{.AbilityScoreMods.wis}}</div>
+        </div>
+        <div class="block cha">
+            <div class="score">{{.AbilityScores.cha}}</div>
+            <div class="mod">{{.AbilityScoreMods.cha}}</div>
+        </div>
+    </section>
+    <section class="extra">
+        {{.Extra}}
+    </section>
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+{"type": "damage", "damage": 10}
+{"type": "damage", "damage": -2}
+{"type": "status", "effect": "test effect", "reset": "short rest"}
+{"type": "event", "event": "short rest"}
+{"type": "use", "name": "power nap"}
+{"type": "event", "event": "short rest"}
+{"type": "event", "event": "long rest"}
+{"type": "event", "event": "long rest"}
+{"type": "event", "event": "long rest"}
+{"type": "event", "event": "long rest"}
+{"type": "event", "event": "long rest"}
