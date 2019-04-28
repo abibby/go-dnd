@@ -21,6 +21,7 @@ func (c *Character) Render(wr io.Writer) error {
 	b := MustAsset("character.html")
 	t, err := template.New("character").Funcs(template.FuncMap{
 		"sign": sign,
+		"add":  add,
 	}).Parse(string(b))
 	if err != nil {
 		return err
@@ -88,4 +89,12 @@ func sign(i int) template.HTML {
 		s = spanSign("-")
 	}
 	return template.HTML(fmt.Sprintf("%s%s", s, span(`class="value"`)(i)))
+}
+
+func add(nums ...int) int {
+	sum := 0
+	for _, num := range nums {
+		sum += num
+	}
+	return sum
 }

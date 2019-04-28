@@ -8,7 +8,7 @@ import (
 
 	"github.com/zwzn/go-dnd/blade"
 
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 
 	"golang.org/x/xerrors"
 )
@@ -112,6 +112,9 @@ func (c *Character) Proficiency() int {
 	return 4
 }
 
+func (c *Character) Mod() map[string]int {
+	return c.AbilityScoreMods()
+}
 func (c *Character) AbilityScoreMods() map[string]int {
 	saves := map[string]int{}
 	for ability, score := range c.AbilityScores {
@@ -120,6 +123,9 @@ func (c *Character) AbilityScoreMods() map[string]int {
 	return saves
 }
 
+func (c *Character) Save() map[string]int {
+	return c.SavingThrows()
+}
 func (c *Character) SavingThrows() map[string]int {
 	saves := map[string]int{}
 	for ability, score := range c.AbilityScoreMods() {
