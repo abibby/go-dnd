@@ -76,9 +76,9 @@ func New(file, md string) (*Character, error) {
 
 	ch := &Character{}
 	ch.file = file
-	parts := strings.SplitN(md, "\n----", 2)
+	parts := strings.SplitN(md, "\n---", 2)
 
-	if !strings.HasPrefix(parts[0], "----") {
+	if !strings.HasPrefix(parts[0], "---") {
 		return nil, ErrInvalidFormat
 	}
 	if len(parts) > 1 {

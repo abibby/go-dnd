@@ -23,6 +23,12 @@ expertise:
     - Persuasion
 ----
 
+# Damage
+
+## Long Sword
+
+1d10 @mod("str") damage
+
 # Spells
 
 ## Fog Cloud

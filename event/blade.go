@@ -10,9 +10,9 @@ func (r *recharge) String() string {
 	eventType := ""
 	switch r.event {
 	case LongRest:
-		eventType = "Long Rest"
+		eventType = "long rest"
 	case ShortRest:
-		eventType = "Short Rest"
+		eventType = "short rest"
 	default:
 		eventType = string(r.event)
 	}
@@ -67,5 +67,30 @@ func (c *chWrapper) updatePostBlade() {
 		r := c.recharge[name]
 		return r.String()
 	})
+	b.Directive("mod", func(args blade.Args) string {
+		var mod string
+		err := args.Unmarshal(&mod)
+		if err != nil {
+			return err.Error()
+		}
+
+		return sign(c.AbilityScoreMods()[mod])
+	})
+	b.Directive("save", func(args blade.Args) string {
+		var mod string
+		err := args.Unmarshal(&mod)
+		if err != nil {
+			return err.Error()
+		}
+
+		return sign(c.SavingThrows()[mod])
+	})
 	c.Blade(b)
+}
+
+func sign(i int) string {
+	if i >= 0 {
+		return fmt.Sprintf("+%d", i)
+	}
+	return fmt.Sprint(i)
 }

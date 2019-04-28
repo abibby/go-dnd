@@ -1,6 +1,7 @@
 package character
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
 	"io"
@@ -24,9 +25,18 @@ func (c *Character) Render(wr io.Writer) error {
 	if err != nil {
 		return err
 	}
-	return t.Execute(wr, tpl{
+
+	t, err = t.New("extra").Parse(string(markdown.ToHTML([]byte(c.rawMD), nil, nil)))
+	if err != nil {
+		return err
+	}
+
+	buf := &bytes.Buffer{}
+	t.ExecuteTemplate(buf, "extra", c)
+
+	return t.ExecuteTemplate(wr, "character", tpl{
 		Character: c,
-		Extra:     template.HTML(markdown.ToHTML([]byte(c.rawMD), nil, nil)),
+		Extra:     template.HTML(buf.Bytes()),
 	})
 }
 
@@ -71,9 +81,9 @@ func sign(i int) template.HTML {
 	s := ""
 	span := tag("span")
 	spanSign := span(`class="sign"`)
-	if i > 0 {
+	if i >= 0 {
 		s = spanSign("+")
-	} else if i < 0 {
+	} else {
 		i = i * -1
 		s = spanSign("-")
 	}
