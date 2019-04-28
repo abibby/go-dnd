@@ -16,7 +16,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/zwzn/dnd/event"
+	"github.com/zwzn/go-dnd/event"
 )
 
 // statusCmd represents the status command

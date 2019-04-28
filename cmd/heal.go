@@ -18,7 +18,7 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
-	"github.com/zwzn/dnd/event"
+	"github.com/zwzn/go-dnd/event"
 )
 
 // healCmd represents the heal command

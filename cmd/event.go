@@ -20,7 +20,7 @@ import (
 
 	"golang.org/x/xerrors"
 
-	"github.com/zwzn/dnd/event"
+	"github.com/zwzn/go-dnd/event"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

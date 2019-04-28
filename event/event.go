@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/zwzn/dnd/character"
+	"github.com/zwzn/go-dnd/character"
 	"golang.org/x/xerrors"
 )
 

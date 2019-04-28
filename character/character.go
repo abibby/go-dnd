@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/zwzn/dnd/blade"
+	"github.com/zwzn/go-dnd/blade"
 
 	"gopkg.in/yaml.v2"
 

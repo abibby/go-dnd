@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/zwzn/dnd/cmd"
+	"github.com/zwzn/go-dnd/cmd"
 )
 
 func main() {

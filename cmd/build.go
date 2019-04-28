@@ -21,8 +21,8 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/spf13/cobra"
-	"github.com/zwzn/dnd/character"
-	"github.com/zwzn/dnd/event"
+	"github.com/zwzn/go-dnd/character"
+	"github.com/zwzn/go-dnd/event"
 )
 
 // buildCmd represents the build command

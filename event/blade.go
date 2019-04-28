@@ -3,7 +3,7 @@ package event
 import (
 	"fmt"
 
-	"github.com/zwzn/dnd/blade"
+	"github.com/zwzn/go-dnd/blade"
 )
 
 func (r *recharge) String() string {
