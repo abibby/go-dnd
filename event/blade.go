@@ -85,6 +85,9 @@ func (c *chWrapper) updatePostBlade() {
 
 		return sign(c.SavingThrows()[mod])
 	})
+	b.Directive("money", func(args blade.Args) string {
+		return c.cp.String()
+	})
 	c.Blade(b)
 }
 

@@ -3,8 +3,10 @@ package event
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/zwzn/go-dnd/character"
 	"golang.org/x/xerrors"
@@ -23,6 +25,7 @@ type Event struct {
 	StatusEvent
 	UseEvent
 	EventEvent
+	MoneyEvent
 }
 type DamageEvent struct {
 	Damage int `json:"damage,omitempty"`
@@ -37,16 +40,54 @@ type UseEvent struct {
 type EventEvent struct {
 	Event EventType `json:"event,omitempty"`
 }
+type MoneyEvent struct {
+	Amount Money `json:"amount,omitempty"`
+}
 type recharge struct {
 	event   EventType
 	current int
 	use     int
 	total   int
 }
+
+type Money int64
+
+const (
+	Copper   = Money(1)
+	Silver   = Copper * 10
+	Gold     = Silver * 10
+	Platinum = Gold * 10
+)
+
+func (m Money) String() string {
+	parts := []string{}
+	current := m
+	pp := current / Platinum
+	if pp != 0 {
+		parts = append(parts, fmt.Sprintf("%dpp", pp))
+		current -= pp * Platinum
+	}
+	gp := current / Gold
+	if gp != 0 {
+		parts = append(parts, fmt.Sprintf("%dgp", gp))
+		current -= gp * Gold
+	}
+	sp := current / Silver
+	if sp != 0 {
+		parts = append(parts, fmt.Sprintf("%dsp", sp))
+		current -= sp * Silver
+	}
+	if current != 0 {
+		parts = append(parts, fmt.Sprintf("%dcp", current))
+	}
+	return strings.Join(parts, " ")
+}
+
 type chWrapper struct {
 	*character.Character
 	status   map[EventType][]string
 	recharge map[string]recharge
+	cp       Money
 }
 
 func UpdateCharacterFile(ch *character.Character, file string) error {
@@ -81,6 +122,7 @@ func UpdateCharacter(ch *character.Character, events []*Event) error {
 		event.StatusEvent.Run(chw)
 		event.EventEvent.Run(chw)
 		event.UseEvent.Run(chw)
+		event.MoneyEvent.Run(chw)
 	}
 	chw.updatePostBlade()
 	return nil
@@ -88,6 +130,9 @@ func UpdateCharacter(ch *character.Character, events []*Event) error {
 
 func (e *DamageEvent) Run(ch *chWrapper) {
 	ch.CurrentHP -= e.Damage
+}
+func (e *MoneyEvent) Run(ch *chWrapper) {
+	ch.cp += e.Amount
 }
 func (e *StatusEvent) Run(ch *chWrapper) {
 	if e.Reset == "" || e.Effect == "" {
